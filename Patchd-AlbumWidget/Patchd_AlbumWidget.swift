@@ -1,15 +1,35 @@
 import WidgetKit
 import SwiftUI
 
+//MARK: - Simple Entry
+struct SimpleEntry: TimelineEntry {
+    let date: Date
+    let configuration: ConfigurationAppIntent
+    let photoCount: Int
+}
+
+//MARK: - Data Model
+struct PhotoItem: Identifiable {
+    let id: Int
+    let offset: CGSize
+    let rotation: Angle
+    let scale: CGFloat
+    let gradientColors: [Color]
+}
+
+//MARK: - Provider
 struct Provider: AppIntentTimelineProvider {
+    //Loading State
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), configuration: ConfigurationAppIntent(), photoCount: 1)
     }
-
+    
+    //Widget Library View
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
         SimpleEntry(date: Date(), configuration: configuration, photoCount: 3)
     }
     
+    //Timeline Construction
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
         var entries: [SimpleEntry] = []
 
@@ -27,20 +47,7 @@ struct Provider: AppIntentTimelineProvider {
     }
 }
 
-struct SimpleEntry: TimelineEntry {
-    let date: Date
-    let configuration: ConfigurationAppIntent
-    let photoCount: Int
-}
-
-struct PhotoItem: Identifiable {
-    let id: Int
-    let offset: CGSize
-    let rotation: Angle
-    let scale: CGFloat
-    let gradientColors: [Color]
-}
-
+//MARK: - Entry View
 struct Patchd_AlbumWidgetEntryView : View {
     var entry: Provider.Entry
     
@@ -57,10 +64,10 @@ struct Patchd_AlbumWidgetEntryView : View {
         let offsetX = sin(seedX) * 90 + cos(seedX * 4) * 50
         let offsetY = cos(seedY) * 120 + sin(seedY * 7) * 40
         
-        // Generate rotation between -15 and 15 degrees
+        // Generate rotation
         let rotation = sin(seedRotation) * 20
         
-        // Generate scale between 0.8 and 1.1
+        // Generate scale
         let scale = 0.85 + (sin(seedScale) + 3) * 0.125
         
         // Generate gradient colors
@@ -86,9 +93,11 @@ struct Patchd_AlbumWidgetEntryView : View {
         )
     }
     
+    //For the demo, we are only supporting .systemLarge family
+    //If your widget supports more, the EntryView would be responsible
+    //for returning the correct view according to size selected.
     var body: some View {
         ZStack {
-            
             
             // Collage of photos
             ForEach(0..<entry.photoCount, id: \.self) { index in
@@ -123,6 +132,7 @@ struct Patchd_AlbumWidgetEntryView : View {
                 .padding(.top, 16)
                 Spacer()
             }
+            
             // Photo counter overlay
             VStack {
                 Spacer()
@@ -161,6 +171,7 @@ struct Patchd_AlbumWidget: Widget {
     }
 }
 
+//MARK: - Configurations Example
 extension ConfigurationAppIntent {
     fileprivate static var smiley: ConfigurationAppIntent {
         let intent = ConfigurationAppIntent()
@@ -175,6 +186,7 @@ extension ConfigurationAppIntent {
     }
 }
 
+//MARK: - Preivew
 #Preview(as: .systemLarge) {
     Patchd_AlbumWidget()
 } timeline: {
