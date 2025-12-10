@@ -167,7 +167,7 @@ struct Patchd_AlbumWidget: Widget {
             Patchd_AlbumWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .supportedFamilies([.systemLarge])
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }
 
